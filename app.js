@@ -635,7 +635,8 @@
                 // MENCARI DATA PALING AWAL (JANUARI) UNTUK MULAI HITUNG
                 let firstMonthWithDataIdx = -1;
                 for (let i = 0; i < 12; i++) {
-                    const kasData = appStore.kas[yearInt.toString()]?.[BULAN_LIST[i]] || [];
+                    // UBAH KE appStore.kas
+                    const kasData = appStore.kas[yearInt.toString()]?.[BULAN_LIST[i]] || []; 
                     const validData = kasData.filter(x => x.id !== 'auto-kas');
                     if (validData.length > 0) {
                         firstMonthWithDataIdx = i;
@@ -646,7 +647,8 @@
                 if (firstMonthWithDataIdx !== -1 && firstMonthWithDataIdx < currentMonthIdx) {
                     // Hitung saldo kumulatif dari bulan pertama ada data, sampai bulan SEBELUM bulan aktif
                     for (let i = firstMonthWithDataIdx; i < currentMonthIdx; i++) {
-                        const kasData = appStore.kas[yearInt.toString()]?.[BULAN_LIST[i]] || [];
+                        // UBAH KE appStore.kas
+                        const kasData = appStore.kas[yearInt.toString()]?.[BULAN_LIST[i]] || []; 
                         const validData = kasData.filter(x => x.id !== 'auto-kas');
                         
                         validData.forEach(item => {
@@ -654,6 +656,10 @@
                         });
                         prevBulanName = BULAN_LIST[i];
                     }
+                } else {
+                    prevBulanName = BULAN_LIST[currentMonthIdx === 0 ? 11 : currentMonthIdx - 1];
+                    saldoAwalBulanIni = 0; 
+                }
                 } else {
                     // Jika bulan ini adalah bulan pertama ada data, atau belum ada data sama sekali
                     prevBulanName = BULAN_LIST[currentMonthIdx === 0 ? 11 : currentMonthIdx - 1];
