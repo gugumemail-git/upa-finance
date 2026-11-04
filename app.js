@@ -376,6 +376,14 @@
         function normalizeStore(s) {
             const out = {};
             s = (s && typeof s === 'object') ? s : {};
+            
+            // Daftar nama bulan untuk perbaikan otomatis
+            const monthsMap = {
+                "0": "Januari", "1": "Februari", "2": "Maret", "3": "April",
+                "4": "Mei", "5": "Juni", "6": "Juli", "7": "Agustus",
+                "8": "September", "9": "Oktober", "10": "November", "11": "Desember"
+            };
+
             ['iwb', 'ss', 'itb', 'ceklis', 'kas', 'pinjaman'].forEach(k => {
                 out[k] = {};
                 const src = (s[k] && typeof s[k] === 'object') ? s[k] : {};
@@ -383,18 +391,33 @@
                     out[k][y] = {};
                     const months = src[y] || {};
                     Object.keys(months).forEach(m => {
+                        // PERBAIKAN: Jika nama bulan berupa angka (0-11), ubah ke nama bulan asli
+                        const targetMonth = monthsMap[m] || m;
+                        
                         (Array.isArray(months[m]) ? months[m] : []).forEach(it => {
                             if (!it || typeof it !== 'object') return;
-                            (out[k][y][m] = out[k][y][m] || []).push(it);
+                            (out[k][y][targetMonth] = out[k][y][targetMonth] || []).push(it);
                         });
                     });
                 });
             });
+            
             ['bendahara'].forEach(k => {
                 out[k] = {};
                 const b = (s[k] && typeof s[k] === 'object') ? s[k] : {};
-                Object.keys(b).forEach(y => { out[k][y] = Array.isArray(b[y]) ? b[y].filter(x => x && typeof x === 'object') : []; });
+                Object.keys(b).forEach(y => { 
+                    // PERBAIKAN UNTUK BENDAHARA
+                    const months = b[y] || {};
+                    out[k][y] = {};
+                    Object.keys(months).forEach(m => {
+                        const targetMonth = monthsMap[m] || m;
+                        if (Array.isArray(months[m])) {
+                            out[k][y][targetMonth] = months[m].filter(x => x && typeof x === 'object');
+                        }
+                    });
+                });
             });
+            
             if (!s.pinjaman) out.pinjaman = { "2026": DEFAULT_2026_PINJAMAN };
             return out;
         }
