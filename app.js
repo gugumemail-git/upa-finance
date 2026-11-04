@@ -445,33 +445,42 @@
             }, CLOUD_SAVE_DELAY_MS);
         }
 
-        function startCloudSync() {
+                function startCloudSync() {
             if (!appInitialized) return;
             if (cloudUnsubscribe) { cloudUnsubscribe(); cloudUnsubscribe = null; }
-            cloudSyncReady = false;
-            let initialSnapshotHandled = false;
+            
+            // KUNCI PENGAMAN: Matikan sinkronisasi save saat pertama kali memuat
+            cloudSyncReady = false; 
+            
             cloudUnsubscribe = cloudDocRef.onSnapshot((snapshot) => {
                 try {
                     const docData = snapshot.exists ? snapshot.data() : null;
                     const cloudStore = docData && docData.appStore;
+                    
                     if (cloudStore && typeof cloudStore === 'object' && !Array.isArray(cloudStore)) {
                         const normalized = normalizeStore(cloudStore);
                         const cloudSerialized = JSON.stringify(normalized);
                         const localSerialized = JSON.stringify(appStore);
                         lastCloudSerialized = cloudSerialized;
-                        cloudSyncReady = true;
+                        
+                        // Jika data di Cloud beda dengan di Lokal, timpa lokal dengan data Cloud
                         if (cloudSerialized !== localSerialized) {
                             appStore = normalized;
                             try { localStorage.setItem(LOCAL_STORE_KEY, cloudSerialized); } catch (storageError) {}
+                            
+                            // Render ulang tampilan agar sesuai data Cloud
                             if (activeTab === 'rekap') renderRekapTahunan();
                             else renderTable();
                         }
+                        
+                        // BARU BUKA KUNCI setelah data Cloud selesai dimuat
+                        cloudSyncReady = true; 
                     } else {
+                        // Jika database kosong, buka kunci dan buat data default
                         cloudSyncReady = true;
                         lastCloudSerialized = '';
                         if (isEditor()) scheduleCloudSave(true);
                     }
-                    initialSnapshotHandled = true;
                 } catch (error) {
                     console.error('Firestore snapshot processing failed:', error);
                 }
