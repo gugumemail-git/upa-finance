@@ -490,6 +490,9 @@
         // ==========================================
         // RENDER TABEL DATA
         // ==========================================
+                // ==========================================
+        // RENDER TABEL DATA
+        // ==========================================
         function renderTable() {
             const thead = document.getElementById('tableHead');
             const tbody = document.getElementById('tableBody');
@@ -635,8 +638,7 @@
                 // MENCARI DATA PALING AWAL (JANUARI) UNTUK MULAI HITUNG
                 let firstMonthWithDataIdx = -1;
                 for (let i = 0; i < 12; i++) {
-                    // UBAH KE appStore.kas
-                    const kasData = appStore.kas[yearInt.toString()]?.[BULAN_LIST[i]] || []; 
+                    const kasData = appStore.kas[yearInt.toString()]?.[BULAN_LIST[i]] || [];
                     const validData = kasData.filter(x => x.id !== 'auto-kas');
                     if (validData.length > 0) {
                         firstMonthWithDataIdx = i;
@@ -647,8 +649,7 @@
                 if (firstMonthWithDataIdx !== -1 && firstMonthWithDataIdx < currentMonthIdx) {
                     // Hitung saldo kumulatif dari bulan pertama ada data, sampai bulan SEBELUM bulan aktif
                     for (let i = firstMonthWithDataIdx; i < currentMonthIdx; i++) {
-                        // UBAH KE appStore.kas
-                        const kasData = appStore.kas[yearInt.toString()]?.[BULAN_LIST[i]] || []; 
+                        const kasData = appStore.kas[yearInt.toString()]?.[BULAN_LIST[i]] || [];
                         const validData = kasData.filter(x => x.id !== 'auto-kas');
                         
                         validData.forEach(item => {
@@ -656,10 +657,6 @@
                         });
                         prevBulanName = BULAN_LIST[i];
                     }
-                } else {
-                    prevBulanName = BULAN_LIST[currentMonthIdx === 0 ? 11 : currentMonthIdx - 1];
-                    saldoAwalBulanIni = 0; 
-                }
                 } else {
                     // Jika bulan ini adalah bulan pertama ada data, atau belum ada data sama sekali
                     prevBulanName = BULAN_LIST[currentMonthIdx === 0 ? 11 : currentMonthIdx - 1];
@@ -729,12 +726,11 @@
                     </tr>
                 `;
 
-                                let sumNom = 0;
+                let sumNom = 0;
                 tbody.innerHTML = dataBulanIni.map((item, idx) => {
                     const nom = item.nominal || 0;
                     const isLunas = item.status === "Lunas";
                     
-                    // Hanya tambahkan ke total jika statusnya BUKAN "Lunas"
                     if (!isLunas) {
                         sumNom += nom; 
                     }
@@ -830,11 +826,11 @@
                 let saldoAwalBulanIni = 0;
                 let prevBulanName = "";
 
-                // MENCARI DATA PALING AWAL (JANUARI) UNTUK MULAI HITUNG
+                // MENGAMBIL SALDO DARI KAS GRUP UPA (Sesuai Permintaan)
                 let firstMonthWithDataIdx = -1;
                 for (let i = 0; i < 12; i++) {
-                    const bendaharaData = appStore.bendahara[yearInt.toString()]?.[BULAN_LIST[i]] || [];
-                    const validData = bendaharaData.filter(x => x.id !== 'auto-bendahara');
+                    const kasData = appStore.kas[yearInt.toString()]?.[BULAN_LIST[i]] || [];
+                    const validData = kasData.filter(x => x.id !== 'auto-kas');
                     if (validData.length > 0) {
                         firstMonthWithDataIdx = i;
                         break;
@@ -842,10 +838,9 @@
                 }
 
                 if (firstMonthWithDataIdx !== -1 && firstMonthWithDataIdx < currentMonthIdx) {
-                    // Hitung saldo kumulatif dari bulan pertama ada data, sampai bulan SEBELUM bulan aktif
                     for (let i = firstMonthWithDataIdx; i < currentMonthIdx; i++) {
-                        const bendaharaData = appStore.bendahara[yearInt.toString()]?.[BULAN_LIST[i]] || [];
-                        const validData = bendaharaData.filter(x => x.id !== 'auto-bendahara');
+                        const kasData = appStore.kas[yearInt.toString()]?.[BULAN_LIST[i]] || [];
+                        const validData = kasData.filter(x => x.id !== 'auto-kas');
                         
                         validData.forEach(item => {
                             saldoAwalBulanIni += (item.masuk || 0) - (item.keluar || 0);
