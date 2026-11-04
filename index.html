@@ -562,19 +562,19 @@
         // FIREBASE CONFIGURATION
         // ==========================================
         const firebaseConfig = {
-            apiKey: "AIzaSyBCSHIRVZAWg6qabeQPDcUcB0JeVxM1K1E",
-            authDomain: "upagrup-app.firebaseapp.com",
-            projectId: "upagrup-app",
-            storageBucket: "upagrup-app.firebasestorage.app",
-            messagingSenderId: "416844232405",
-            appId: "1:416844232405:web:469fc8168092bcba78145c",
-            measurementId: "G-QGXBEBV2NT"
+        apiKey: "AIzaSyCHkvx8b-bVjdCiCEXWVRjkPJnsxufYjvs",
+        authDomain: "upa-finance.firebaseapp.com",
+        projectId: "upa-finance",
+        storageBucket: "upa-finance.firebasestorage.app",
+        messagingSenderId: "676144093078",
+        appId: "1:676144093078:web:7a6cbca5989fa644ccafb7",
+        measurementId: "G-2X5J5NMHR2"
         };
         firebase.initializeApp(firebaseConfig);
         const firebaseAuth = firebase.auth();
         const firebaseDb = firebase.firestore();
         const cloudDocRef = firebaseDb.collection('upaFinance').doc('main');
-        const FIREBASE_EDITOR_EMAIL = 'upagrup@gmail.com'; 
+        const FIREBASE_EDITOR_EMAIL = 'upafinance@gmail.com'; 
         const LOCAL_STORE_KEY = 'UPA_3216M010_SHOPEE_SIDEBAR';
         
         let cloudUnsubscribe = null;
